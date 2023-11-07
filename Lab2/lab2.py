@@ -1,16 +1,16 @@
 #--------------------Ex1-----------------------
 
-# def fibonacci(n):
-#     listN=[]
-#     n1,n2=0,1
-#     for i in range(n):
-#         listN.append(n1)
-#         n1,n2=n2,n1+n2
-#     return listN
+def fibonacci(n):
+    listN=[]
+    n1,n2=0,1
+    for i in range(n):
+        listN.append(n1)
+        n1,n2=n2,n1+n2
+    return listN
 
-# n=int(input("Introduceti n= "))
-# print(n)
-# print(fibonacci(n))
+n=int(input("Introduceti n= "))
+print(n)
+print(fibonacci(n))
 
 #--------------------Ex2-----------------------
 # def prim(n):
