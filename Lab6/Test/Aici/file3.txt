@@ -1,0 +1,10 @@
+Check for the alpha characters or alpha numeric characters
+Check for alphabet is accepted in upper and lower case both
+Check the mandatory condition for the textbox if given
+Check the textbox is blank or not by default
+Check Max-Min character limit of text box
+Check for numeric characters only including negative and decimal values
+Check with the requirement whether it will accept numeric and special characters
+Check by entering ”HTML tag” such as <H1> Hello </H1>and links
+Check by entering “Java Script” such as alert("hello");
+saluttttt
