@@ -9,16 +9,31 @@ class Game2048:
         self.root.title("2048 Game By Gelu Galan")
         self.player_name = ""
         self.opponent_type = ""
+        self.game_size_var=""
         self.opponent_options = ["solo", "computer", "human"]
+        self.game_size_options = ["2", "3", "4", "5", "6", "7", "8", "9"]
         self.create_start_screen()
         self.root.mainloop()
 
 
     def create_game_board(self):
-        for i in range(4):
-            for j in range(4):
+        player_name_label = tk.Label(self.root, text="Name: {}".format(self.player_name))
+        player_name_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
+
+        opponent_type_label = tk.Label(self.root, text="Opponent: {}".format(self.opponent_type))
+        opponent_type_label.grid(row=0, column=2, columnspan=2, padx=5, pady=5)
+
+        # Etichete pentru scor și cel mai bun scor
+        score_label = tk.Label(self.root, text="Score: {}".format("xxx"))
+        score_label.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
+
+        best_score_label = tk.Label(self.root, text="Best: {}".format("9999"))
+        best_score_label.grid(row=1, column=2, columnspan=2, padx=5, pady=5)
+
+        for i in range(int(self.game_size_var.get())):
+            for j in range(int(self.game_size_var.get())):
                 cell_label = tk.Label(self.root, text="", width=5, height=2)
-                cell_label.grid(row=i, column=j, padx=5, pady=5)
+                cell_label.grid(row=i+2, column=j, padx=5, pady=5)
                 self.board_labels[i][j] = cell_label
     
 
@@ -35,11 +50,25 @@ class Game2048:
         self.opponent_var = tk.StringVar(self.root)
         self.opponent_var.set(self.opponent_options[0])
 
+
         opponent_menu = tk.OptionMenu(self.root, self.opponent_var, *self.opponent_options)
         opponent_menu.grid(row=8, column=0, columnspan=4, padx=5, pady=5)
 
+
+        game_size_label = tk.Label(self.root, text="Select game size:")
+        game_size_label.grid(row=9, column=0, columnspan=4)
+        
+
+        self.game_size_var = tk.StringVar(self.root)
+        self.game_size_var.set(self.game_size_options[2])
+
+        game_size_menu = tk.OptionMenu(self.root, self.game_size_var, *self.game_size_options)
+        game_size_menu.grid(row=10, column=0, columnspan=4, padx=5, pady=5)
+
+        
+
         next_button = tk.Button(self.root, text="Next", command=self.start_game)
-        next_button.grid(row=9, column=0, columnspan=4, padx=5, pady=5)
+        next_button.grid(row=11, column=0, columnspan=4, padx=5, pady=5)
 
     def start_game(self):
         self.player_name = self.name_entry.get()
@@ -135,8 +164,8 @@ class Game2048:
         return list_to_combine
 
     def update_interface(self):
-        for i in range(4):
-            for j in range(4):
+        for i in range(int(self.game_size_var.get())):
+            for j in range(int(self.game_size_var.get())):
                 cell_value = self.board[i][j]
                 cell_label = self.board_labels[i][j]
                 cell_label.config(text=str(cell_value) if cell_value != 0 else "", bg=self.color_background(cell_value))
@@ -185,3 +214,4 @@ class Game2048:
 
 if __name__ == "__main__":
     game = Game2048()
+ 
