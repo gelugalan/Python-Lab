@@ -30,8 +30,8 @@ class Game2048:
         best_score_label = tk.Label(self.root, text="Best: {}".format("9999"))
         best_score_label.grid(row=1, column=2, columnspan=2, padx=5, pady=5)
 
-        for i in range(int(self.game_size_var.get())):
-            for j in range(int(self.game_size_var.get())):
+        for i in range(int(self.game_size_var)):
+            for j in range(int(self.game_size_var)):
                 cell_label = tk.Label(self.root, text="", width=5, height=2)
                 cell_label.grid(row=i+2, column=j, padx=5, pady=5)
                 self.board_labels[i][j] = cell_label
@@ -73,12 +73,13 @@ class Game2048:
     def start_game(self):
         self.player_name = self.name_entry.get()
         self.opponent_type = self.opponent_var.get()
+        self.game_size_var = self.game_size_var.get()
 
         for widget in self.root.winfo_children():
             widget.destroy()
 
         self.board = self.initialize_board()
-        self.board_labels = [[None] * 4 for _ in range(4)]
+        self.board_labels = [[None] * int(self.game_size_var) for _ in range(int(self.game_size_var))]
         self.create_game_board()
         self.update_interface()
         self.root.bind("<Key>", self.on_key)
@@ -88,9 +89,9 @@ class Game2048:
 
     def initialize_board(self):
         board = []
-        for i in range(4):
+        for i in range(int(self.game_size_var)):
             row = []
-            for j in range(4):
+            for j in range(int(self.game_size_var)):
                 row.append(0)
             board.append(row)
         self.add_number(board)
@@ -106,8 +107,8 @@ class Game2048:
 
     def find_empty_positions(self, board):
         empty_positions = []
-        for i in range(4):
-            for j in range(4):
+        for i in range(int(self.game_size_var)):
+            for j in range(int(self.game_size_var)):
                 if board[i][j] == 0:
                     empty_positions.append((i, j))
         return empty_positions
@@ -119,39 +120,39 @@ class Game2048:
             print()
 
     def move_up(self):
-        for column in range(4):
-            column_values = [self.board[i][column] for i in range(4) if self.board[i][column] != 0]
+        for column in range(int(self.game_size_var)):
+            column_values = [self.board[i][column] for i in range(int(self.game_size_var)) if self.board[i][column] != 0]
             column_values = self.combine_numbers(column_values)
-            column_values += [0] * (4 - len(column_values))
+            column_values += [0] * (int(self.game_size_var) - len(column_values))
 
-            for i in range(4):
+            for i in range(int(self.game_size_var)):
                 self.board[i][column] = column_values[i]
 
     def move_down(self):
-        for column in range(4):
-            column_values = [self.board[i][column] for i in range(3, -1, -1) if self.board[i][column] != 0]
+        for column in range(int(self.game_size_var)):
+            column_values = [self.board[i][column] for i in range(int(self.game_size_var) - 1, -1, -1) if self.board[i][column] != 0]
             column_values = self.combine_numbers(column_values)
-            column_values = [0] * (4 - len(column_values)) + column_values[::-1]
+            column_values = [0] * (int(self.game_size_var) - len(column_values)) + column_values[::-1]
 
-            for i in range(4):
+            for i in range(int(self.game_size_var)):
                 self.board[i][column] = column_values[i]
 
     def move_left(self):
-        for row in range(4):
+        for row in range(int(self.game_size_var)):
             row_values = [number for number in self.board[row] if number != 0]
             row_values = self.combine_numbers(row_values)
-            row_values += [0] * (4 - len(row_values))
+            row_values += [0] * (int(self.game_size_var) - len(row_values))
 
-            for i in range(4):
+            for i in range(int(self.game_size_var)):
                 self.board[row][i] = row_values[i]
 
     def move_right(self):
-        for row in range(4):
+        for row in range(int(self.game_size_var)):
             row_values = [number for number in self.board[row][::-1] if number != 0]
             row_values = self.combine_numbers(row_values)
-            row_values = [0] * (4 - len(row_values)) + row_values[::-1]
+            row_values = [0] * (int(self.game_size_var) - len(row_values)) + row_values[::-1]
 
-            for i in range(4):
+            for i in range(int(self.game_size_var)):
                 self.board[row][i] = row_values[i]
 
     def combine_numbers(self, list_to_combine):
@@ -160,15 +161,16 @@ class Game2048:
                 list_to_combine[i] *= 2
                 list_to_combine[i + 1] = 0
         list_to_combine = [number for number in list_to_combine if number != 0]
-        list_to_combine += [0] * (4 - len(list_to_combine))
+        list_to_combine += [0] * (int(self.game_size_var) - len(list_to_combine))
         return list_to_combine
 
     def update_interface(self):
-        for i in range(int(self.game_size_var.get())):
-            for j in range(int(self.game_size_var.get())):
+        for i in range(int(self.game_size_var)):
+            for j in range(int(self.game_size_var)):
                 cell_value = self.board[i][j]
                 cell_label = self.board_labels[i][j]
                 cell_label.config(text=str(cell_value) if cell_value != 0 else "", bg=self.color_background(cell_value))
+
 
     def color_background(self, value):
         colors = {
