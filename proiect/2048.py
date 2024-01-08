@@ -34,12 +34,17 @@ class Game2048:
 
         best_score_label = tk.Label(self.root, text="Best: {}".format(best_score_val))
         best_score_label.grid(row=1, column=2, columnspan=2, padx=5, pady=5)
-
+        
+        top_scores_button = tk.Button(self.root, text="Top Scores", command=self.show_top_scores)
+        top_scores_button.grid(row=2, column=0, columnspan=4, padx=5, pady=5)
+        
         for i in range(int(self.game_size_var)):
             for j in range(int(self.game_size_var)):
                 cell_label = tk.Label(self.root, text="", width=5, height=2)
-                cell_label.grid(row=i+2, column=j, padx=5, pady=5)
+                cell_label.grid(row=i+3, column=j, padx=5, pady=5)
                 self.board_labels[i][j] = cell_label
+        
+        
     
 
     def create_start_screen(self):
@@ -67,13 +72,16 @@ class Game2048:
         self.game_size_var = tk.StringVar(self.root)
         self.game_size_var.set(self.game_size_options[2])
 
+        top_scores_button = tk.Button(self.root, text="Top Scores", command=self.show_top_scores)
+        top_scores_button.grid(row=11, column=0, columnspan=4, padx=5, pady=5)
+
         game_size_menu = tk.OptionMenu(self.root, self.game_size_var, *self.game_size_options)
         game_size_menu.grid(row=10, column=0, columnspan=4, padx=5, pady=5)
 
         
 
         next_button = tk.Button(self.root, text="Next", command=self.start_game)
-        next_button.grid(row=11, column=0, columnspan=4, padx=5, pady=5)
+        next_button.grid(row=12, column=0, columnspan=4, padx=5, pady=5)
 
     def start_game(self):
         self.player_name = self.name_entry.get()
@@ -254,7 +262,46 @@ class Game2048:
                 with open("scores.json", "w") as json_file:
                     json.dump(self.scoruri_json, json_file, indent=4)
 
+    def show_top_scores(self):
+        top_scores_window = tk.Toplevel(self.root)
+        top_scores_window.title("Top Scores")
 
+        
+        scores_frame = tk.Frame(top_scores_window)
+        scores_frame.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+
+        game_size_label = tk.Label(top_scores_window, text="Select game size:")
+        game_size_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
+
+        game_size_var = tk.StringVar(top_scores_window)
+        game_size_var.set(self.game_size_options[2])
+
+        game_size_menu = tk.OptionMenu(top_scores_window, game_size_var, *self.game_size_options, command=lambda size: self.display_scores(scores_frame, size))
+        game_size_menu.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
+
+        
+
+    def display_scores(self, scores_frame, selected_game_size):
+        for widget in scores_frame.winfo_children():
+            widget.destroy()
+
+        game_info = self.scoruri_json["scoruri"].get(f"{selected_game_size}x{selected_game_size}")
+        if game_info:
+            scores = game_info.get("scores", {})
+            scores_label = tk.Label(scores_frame, text="Scores:")
+            scores_label.grid(row=0, column=0, columnspan=3, padx=5, pady=5)  
+
+            
+            sorted_scores = sorted(scores.items(), key=lambda x: x[1]['score_player'], reverse=True)
+
+            for i, (player, score_info) in enumerate(sorted_scores, start=1):
+                
+                player_label = tk.Label(scores_frame, text=f"{i}. {player}: {score_info['score_player']}")
+                player_label.grid(row=i, column=0, columnspan=3, padx=5, pady=2)  
+
+
+
+                
 if __name__ == "__main__":
     game = Game2048()
  
