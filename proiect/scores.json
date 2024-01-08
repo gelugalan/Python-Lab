@@ -1,0 +1,188 @@
+{
+    "scoruri": {
+        "2x2": {
+            "index_joc": 2,
+            "best_score": {
+                "jucator": "GG",
+                "scor": 108
+            },
+            "scores": {
+                "player1": {
+                    "player_name": "Jucator1",
+                    "score_player": 500
+                },
+                "player2": {
+                    "player_name": "Jucator2",
+                    "score_player": 450
+                },
+                "player3": {
+                    "player_name": "Jucator3",
+                    "score_player": 400
+                },
+                "Gelu": {
+                    "player_name": "Gelu",
+                    "score_player": 120
+                },
+                "": {
+                    "player_name": "",
+                    "score_player": 60
+                },
+                "GG": {
+                    "player_name": "GG",
+                    "score_player": 108
+                }
+            }
+        },
+        "3x3": {
+            "index_joc": 3,
+            "best_score": {
+                "jucator": "Jucator1",
+                "scor": 800
+            },
+            "scores": {
+                "player1": {
+                    "player_name": "Jucator1",
+                    "score_player": 800
+                },
+                "player2": {
+                    "player_name": "Jucator2",
+                    "score_player": 750
+                },
+                "player3": {
+                    "player_name": "Jucator3",
+                    "score_player": 700
+                }
+            }
+        },
+        "4x4": {
+            "index_joc": 4,
+            "best_score": {
+                "jucator": "Jucator1",
+                "scor": 1200
+            },
+            "scores": {
+                "player1": {
+                    "player_name": "Jucator1",
+                    "score_player": 1200
+                },
+                "player2": {
+                    "player_name": "Jucator2",
+                    "score_player": 1150
+                },
+                "player3": {
+                    "player_name": "Jucator3",
+                    "score_player": 1100
+                }
+            }
+        },
+        "5x5": {
+            "index_joc": 5,
+            "best_score": {
+                "jucator": "Jucator1",
+                "scor": 2000
+            },
+            "scores": {
+                "player1": {
+                    "player_name": "Jucator1",
+                    "score_player": 2000
+                },
+                "player2": {
+                    "player_name": "Jucator2",
+                    "score_player": 1950
+                },
+                "player3": {
+                    "player_name": "Jucator3",
+                    "score_player": 1900
+                }
+            }
+        },
+        "6x6": {
+            "index_joc": 6,
+            "best_score": {
+                "jucator": "Jucator1",
+                "scor": 3000
+            },
+            "scores": {
+                "player1": {
+                    "player_name": "Jucator1",
+                    "score_player": 3000
+                },
+                "player2": {
+                    "player_name": "Jucator2",
+                    "score_player": 2950
+                },
+                "player3": {
+                    "player_name": "Jucator3",
+                    "score_player": 2900
+                }
+            }
+        },
+        "7x7": {
+            "index_joc": 7,
+            "best_score": {
+                "jucator": "Jucator1",
+                "scor": 5000
+            },
+            "scores": {
+                "player1": {
+                    "player_name": "Jucator1",
+                    "score_player": 5000
+                },
+                "player2": {
+                    "player_name": "Jucator2",
+                    "score_player": 4950
+                },
+                "player3": {
+                    "player_name": "Jucator3",
+                    "score_player": 4900
+                }
+            }
+        },
+        "8x8": {
+            "index_joc": 8,
+            "best_score": {
+                "jucator": "Jucator1",
+                "scor": 8000
+            },
+            "scores": {
+                "player1": {
+                    "player_name": "Jucator1",
+                    "score_player": 8000
+                },
+                "player2": {
+                    "player_name": "Jucator2",
+                    "score_player": 7950
+                },
+                "player3": {
+                    "player_name": "Jucator3",
+                    "score_player": 7900
+                }
+            }
+        },
+        "9x9": {
+            "index_joc": 9,
+            "best_score": {
+                "jucator": "Gelu",
+                "scor": 53248
+            },
+            "scores": {
+                "player1": {
+                    "player_name": "Jucator1",
+                    "score_player": 13000
+                },
+                "player2": {
+                    "player_name": "Jucator2",
+                    "score_player": 12950
+                },
+                "player3": {
+                    "player_name": "Jucator3",
+                    "score_player": 12900
+                },
+                "Gelu": {
+                    "player_name": "Gelu",
+                    "score_player": 53248
+                }
+            }
+        }
+    }
+}
