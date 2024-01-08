@@ -57,8 +57,8 @@
         "4x4": {
             "index_joc": 4,
             "best_score": {
-                "jucator": "Jucator1",
-                "scor": 1200
+                "jucator": "",
+                "scor": 2052
             },
             "scores": {
                 "player1": {
@@ -72,6 +72,10 @@
                 "player3": {
                     "player_name": "Jucator3",
                     "score_player": 1100
+                },
+                "": {
+                    "player_name": "",
+                    "score_player": 2052
                 }
             }
         },
@@ -93,6 +97,10 @@
                 "player3": {
                     "player_name": "Jucator3",
                     "score_player": 1900
+                },
+                "": {
+                    "player_name": "",
+                    "score_player": 648
                 }
             }
         },
@@ -114,6 +122,10 @@
                 "player3": {
                     "player_name": "Jucator3",
                     "score_player": 2900
+                },
+                "": {
+                    "player_name": "",
+                    "score_player": 24
                 }
             }
         },
@@ -156,6 +168,10 @@
                 "player3": {
                     "player_name": "Jucator3",
                     "score_player": 7900
+                },
+                "": {
+                    "player_name": "",
+                    "score_player": 32
                 }
             }
         },
@@ -181,6 +197,10 @@
                 "Gelu": {
                     "player_name": "Gelu",
                     "score_player": 53248
+                },
+                "": {
+                    "player_name": "",
+                    "score_player": 2120
                 }
             }
         }
