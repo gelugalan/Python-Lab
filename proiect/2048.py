@@ -5,44 +5,49 @@ import json
 
 class Game2048:
     def __init__(self):
-        
         self.root = tk.Tk()
         self.root.title("2048 Game By Gelu Galan")
         self.player_name = ""
         self.opponent_type = ""
-        self.game_size_var=""
+        self.game_size_var = ""
         self.opponent_options = ["solo", "computer", "human"]
         self.game_size_options = ["2", "3", "4", "5", "6", "7", "8", "9"]
         self.score = 0
+        self.num_players = 1
         with open("scores.json", "r") as json_file:
             self.scoruri_json = json.load(json_file)
         self.create_start_screen()
         self.root.mainloop()
-        
 
+    def create_game_board(self, best_score_val, player_num):
+        if self.board_labels is None:
+            self.board_labels = [[[None] * int(self.game_size_var) for _ in range(int(self.game_size_var))] for _ in range(2)]
+        else:
+            
+            self.board_labels[player_num] = [[None] * int(self.game_size_var) for _ in range(int(self.game_size_var))]
 
-    def create_game_board(self,best_score_val):
         player_name_label = tk.Label(self.root, text="Name: {}".format(self.player_name))
-        player_name_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
+        player_name_label.grid(row=0, column=player_num * (int(self.game_size_var) + 2), columnspan=2, padx=5, pady=5)
 
         opponent_type_label = tk.Label(self.root, text="Opponent: {}".format(self.opponent_type))
-        opponent_type_label.grid(row=0, column=2, columnspan=2, padx=5, pady=5)
+        opponent_type_label.grid(row=0, column=player_num * (int(self.game_size_var) + 2) + 2, columnspan=2, padx=5, pady=5)
 
-        # Etichete pentru scor și cel mai bun scor
-        self.score_label = tk.Label(self.root, text="Score: {}".format(self.score))
-        self.score_label.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
+        
+        score_label = tk.Label(self.root, text="Score: {}".format(self.score))
+        score_label.grid(row=1, column=player_num * (int(self.game_size_var) + 2), columnspan=2, padx=5, pady=5)
 
         best_score_label = tk.Label(self.root, text="Best: {}".format(best_score_val))
-        best_score_label.grid(row=1, column=2, columnspan=2, padx=5, pady=5)
+        best_score_label.grid(row=1, column=player_num * (int(self.game_size_var) + 2) + 2, columnspan=2, padx=5, pady=5)
+
         
-        top_scores_button = tk.Button(self.root, text="Top Scores", command=self.show_top_scores)
-        top_scores_button.grid(row=2, column=0, columnspan=4, padx=5, pady=5)
-        
+
         for i in range(int(self.game_size_var)):
             for j in range(int(self.game_size_var)):
                 cell_label = tk.Label(self.root, text="", width=5, height=2)
-                cell_label.grid(row=i+3, column=j, padx=5, pady=5)
-                self.board_labels[i][j] = cell_label
+                cell_label.grid(row=i + 3, column=player_num * (int(self.game_size_var) + 2) + j, padx=5, pady=5)
+                self.board_labels[player_num][i][j] = cell_label
+
+
         
         
     
@@ -88,16 +93,21 @@ class Game2048:
         self.opponent_type = self.opponent_var.get()
         self.game_size_var = self.game_size_var.get()
         index_joc = int(self.game_size_var)
-        game_info = self.scoruri_json["scoruri"].get(f"{index_joc}x{index_joc}") 
-        
-        
-            
+        game_info = self.scoruri_json["scoruri"].get(f"{index_joc}x{index_joc}")
+
         for widget in self.root.winfo_children():
             widget.destroy()
         best_score = game_info.get("best_score", {}).get("scor", 0)
-        self.board = self.initialize_board()
-        self.board_labels = [[None] * int(self.game_size_var) for _ in range(int(self.game_size_var))]
-        self.create_game_board(best_score)
+
+        if self.opponent_type == "human":
+            self.num_players = 2
+
+        # Create two game boards for each player
+        self.board = [self.initialize_board(), self.initialize_board()]
+        self.board_labels = [[[None] * int(self.game_size_var) for _ in range(int(self.game_size_var))] for _ in range(2)]
+        self.create_game_board(best_score, 0)
+        if self.opponent_type == "human":
+            self.create_game_board(best_score, 1)
         self.update_interface()
         self.root.bind("<Key>", self.on_key)
 
@@ -136,41 +146,41 @@ class Game2048:
                 print(number, end="\t")
             print()
 
-    def move_up(self):
+    def move_up(self, player_num):
         for column in range(int(self.game_size_var)):
-            column_values = [self.board[i][column] for i in range(int(self.game_size_var)) if self.board[i][column] != 0]
+            column_values = [self.board[player_num][i][column] for i in range(int(self.game_size_var)) if self.board[player_num][i][column] != 0]
             column_values = self.combine_numbers(column_values)
             column_values += [0] * (int(self.game_size_var) - len(column_values))
 
             for i in range(int(self.game_size_var)):
-                self.board[i][column] = column_values[i]
+                self.board[player_num][i][column] = column_values[i]
 
-    def move_down(self):
+    def move_down(self, player_num):
         for column in range(int(self.game_size_var)):
-            column_values = [self.board[i][column] for i in range(int(self.game_size_var) - 1, -1, -1) if self.board[i][column] != 0]
+            column_values = [self.board[player_num][i][column] for i in range(int(self.game_size_var) - 1, -1, -1) if self.board[player_num][i][column] != 0]
             column_values = self.combine_numbers(column_values)
             column_values = [0] * (int(self.game_size_var) - len(column_values)) + column_values[::-1]
 
             for i in range(int(self.game_size_var)):
-                self.board[i][column] = column_values[i]
+                self.board[player_num][i][column] = column_values[i]
 
-    def move_left(self):
+    def move_left(self, player_num):
         for row in range(int(self.game_size_var)):
-            row_values = [number for number in self.board[row] if number != 0]
+            row_values = [number for number in self.board[player_num][row] if number != 0]
             row_values = self.combine_numbers(row_values)
             row_values += [0] * (int(self.game_size_var) - len(row_values))
 
             for i in range(int(self.game_size_var)):
-                self.board[row][i] = row_values[i]
+                self.board[player_num][row][i] = row_values[i]
 
-    def move_right(self):
+    def move_right(self, player_num):
         for row in range(int(self.game_size_var)):
-            row_values = [number for number in self.board[row][::-1] if number != 0]
+            row_values = [number for number in self.board[player_num][row][::-1] if number != 0]
             row_values = self.combine_numbers(row_values)
             row_values = [0] * (int(self.game_size_var) - len(row_values)) + row_values[::-1]
 
             for i in range(int(self.game_size_var)):
-                self.board[row][i] = row_values[i]
+                self.board[player_num][row][i] = row_values[i]
 
     def combine_numbers(self, list_to_combine):
         for i in range(len(list_to_combine) - 1):
@@ -184,12 +194,17 @@ class Game2048:
         return list_to_combine
 
     def update_interface(self):
-        for i in range(int(self.game_size_var)):
-            for j in range(int(self.game_size_var)):
-                cell_value = self.board[i][j]
-                cell_label = self.board_labels[i][j]
-                cell_label.config(text=str(cell_value) if cell_value != 0 else "", bg=self.color_background(cell_value))
-                self.score_label.config(text="Score: {}".format(self.score))
+
+        for player_num in range(self.num_players):
+            for i in range(int(self.game_size_var)):
+                for j in range(int(self.game_size_var)):
+                    cell_value = self.board[player_num][i][j]
+                    cell_label = self.board_labels[player_num][i][j]
+                    cell_label.config(text=str(cell_value) if cell_value != 0 else "", bg=self.color_background(cell_value))
+
+            
+
+        
 
 
     def color_background(self, value):
@@ -210,28 +225,44 @@ class Game2048:
         return colors[value]
 
     def on_key(self, event):
-        direction = ""
-        if event.keysym in ['Up', 'w']:
-            direction = 'w'
-        elif event.keysym in ['Down', 's']:
-            direction = 's'
-        elif event.keysym in ['Left', 'a']:
-            direction = 'a'
-        elif event.keysym in ['Right', 'd']:
-            direction = 'd'
+        # movements
+        direction_p1 = ""
+        direction_p2 = ""
+        if event.keysym in ['w']:
+            direction_p1 = 'w'
+        elif event.keysym in ['s']:
+            direction_p1 = 's'
+        elif event.keysym in ['a']:
+            direction_p1 = 'a'
+        elif event.keysym in ['d']:
+            direction_p1 = 'd'
+        elif event.keysym == 'Up':
+            direction_p2 = 'w'
+        elif event.keysym == 'Down':
+            direction_p2 = 's'
+        elif event.keysym == 'Left':
+            direction_p2 = 'a'
+        elif event.keysym == 'Right':
+            direction_p2 = 'd'
 
-        if direction:
-            if direction == 'w':
-                self.move_up()
-            elif direction == 's':
-                self.move_down()
-            elif direction == 'a':
-                self.move_left()
-            elif direction == 'd':
-                self.move_right()
+        if direction_p1:
+            self.process_move(direction_p1, 0)
+        if direction_p2:
+            self.process_move(direction_p2, 1)
 
-            self.add_number(self.board)
-            self.update_interface()
+        self.update_interface()
+
+    def process_move(self, direction, player_num):
+        if direction == 'w':
+            self.move_up(player_num)
+        elif direction == 's':
+            self.move_down(player_num)
+        elif direction == 'a':
+            self.move_left(player_num)
+        elif direction == 'd':
+            self.move_right(player_num)
+
+        self.add_number(self.board[player_num])
 
     def update_scores(self, player_name, new_score):
         index_joc = int(self.game_size_var)
