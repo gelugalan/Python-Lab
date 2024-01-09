@@ -84,6 +84,10 @@
                 "aaa": {
                     "player_name": "aaa",
                     "score_player": 64
+                },
+                "Gelu": {
+                    "player_name": "Gelu",
+                    "score_player": 128
                 }
             }
         },

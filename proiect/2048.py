@@ -7,7 +7,7 @@ class Game2048:
     def __init__(self):
         self.root = tk.Tk()
         self.root.configure(bg="darkgrey")
-
+        
         self.root.title("2048 Game By Gelu Galan")
         self.player_name = []
         
@@ -16,6 +16,7 @@ class Game2048:
         self.opponent_options = ["solo", "computer", "human"]
         self.game_size_options = ["2", "3", "4", "5", "6", "7", "8", "9"]
         self.score = 0
+        self.scores = [0,0]
         self.current_page = 0
         self.buttons_created = False
         self.num_players = 1
@@ -30,13 +31,9 @@ class Game2048:
         else:
             
             self.board_labels[player_num] = [[None] * int(self.game_size_var) for _ in range(int(self.game_size_var))]
-        if player_num==0:
-            player_name_label = tk.Label(self.root, text="Name: {}".format(self.player_name[0]))
-            player_name_label.grid(row=0, column=player_num * (int(self.game_size_var) + 2), columnspan=2, padx=5, pady=5)
-        else:
-            player_name_label = tk.Label(self.root, text="Name: {}".format(self.player_name[1]))
-            player_name_label.grid(row=0, column=player_num * (int(self.game_size_var) + 2), columnspan=2, padx=5, pady=5)
 
+        player_name_label = tk.Label(self.root, text="Name: {}".format(self.player_name[player_num]))
+        player_name_label.grid(row=0, column=player_num * (int(self.game_size_var) + 2), columnspan=2, padx=5, pady=5)
         
 
         opponent_type_label = tk.Label(self.root, text="Opponent: {}".format(self.opponent_type))
@@ -57,17 +54,22 @@ class Game2048:
                 cell_label = tk.Label(self.root, text="", width=5, height=2)
                 cell_label.grid(row=i + 3, column=player_num * (int(self.game_size_var) + 2) + j, padx=5, pady=5)
                 self.board_labels[player_num][i][j] = cell_label
-        
 
-        if not self.buttons_created and self.opponent_type == "human":
+        if  player_num==0 and self.num_players==2:
+            separation_label = tk.Label(self.root, text="2048 Game", width=10, height=2)
+            separation_label.grid(row=3, column=player_num * (int(self.game_size_var) + 3) + int(self.game_size_var), padx=5, pady=5)
+
+
+        if not self.buttons_created :
             self.buttons_created = True  # Set the flag to True to avoid creating buttons again
 
             new_game_button = tk.Button(self.root, text="New", command=self.restart_game)
             new_game_button.grid(row=int(self.game_size_var) + 3, column=player_num * (int(self.game_size_var) + 2), columnspan=1, padx=5, pady=5)
 
-            # Add Quit button
+            
             quit_button = tk.Button(self.root, text="Quit", command=self.root.destroy)
             quit_button.grid(row=int(self.game_size_var) + 3, column=player_num * (int(self.game_size_var) + 2) + 1, columnspan=1, padx=5, pady=5)
+            
 
 
 
@@ -95,10 +97,9 @@ class Game2048:
         next_button.grid(row=2, column=2, padx=5, pady=5)
 
     def create_selected_fields(self):
-        # Destroy the current start frame
         self.start_frame.destroy()
 
-        # Check the selected opponent and call the corresponding function
+        
         selected_opponent = self.opponent_var.get()
         if selected_opponent == "solo":
             self.create_solo_fields()
@@ -131,6 +132,10 @@ class Game2048:
 
         next_button = tk.Button(self.root, text="Next", command=self.start_game)
         next_button.grid(row=7, column=0, columnspan=4, padx=5, pady=5)
+
+
+        self.player2_name_entry = tk.Entry(self.root)  
+        
 
     def create_multiplayer_fields(self):
         name_label_p1 = tk.Label(self.root, text="Player 1 Name:")
@@ -192,6 +197,11 @@ class Game2048:
         self.update_interface()
         self.root.bind("<Key>", self.on_key)
 
+        # self.process_move(direction_p1, 0)
+        # if self.opponent_type == "human":
+        #     self.process_move(direction_p2, 1)
+        # if self.check_game_over(0) or (self.opponent_type == "human" and self.check_game_over(1)):
+        #     return
         self.root.mainloop()
 
 
@@ -210,8 +220,9 @@ class Game2048:
         empty_positions = self.find_empty_positions(board)
         if empty_positions:
             position = random.choice(empty_positions)
-            value = 2 if random.random() < 0.5 else 4
+            value = 2 if random.random() < 0.9 else 4
             board[position[0]][position[1]] = value
+
 
     def find_empty_positions(self, board):
         empty_positions = []
@@ -230,7 +241,7 @@ class Game2048:
     def move_up(self, player_num):
         for column in range(int(self.game_size_var)):
             column_values = [self.board[player_num][i][column] for i in range(int(self.game_size_var)) if self.board[player_num][i][column] != 0]
-            column_values = self.combine_numbers(column_values)
+            column_values = self.combine_numbers(column_values,player_num)
             column_values += [0] * (int(self.game_size_var) - len(column_values))
 
             for i in range(int(self.game_size_var)):
@@ -239,7 +250,7 @@ class Game2048:
     def move_down(self, player_num):
         for column in range(int(self.game_size_var)):
             column_values = [self.board[player_num][i][column] for i in range(int(self.game_size_var) - 1, -1, -1) if self.board[player_num][i][column] != 0]
-            column_values = self.combine_numbers(column_values)
+            column_values = self.combine_numbers(column_values,player_num)
             column_values = [0] * (int(self.game_size_var) - len(column_values)) + column_values[::-1]
 
             for i in range(int(self.game_size_var)):
@@ -248,7 +259,7 @@ class Game2048:
     def move_left(self, player_num):
         for row in range(int(self.game_size_var)):
             row_values = [number for number in self.board[player_num][row] if number != 0]
-            row_values = self.combine_numbers(row_values)
+            row_values = self.combine_numbers(row_values,player_num)
             row_values += [0] * (int(self.game_size_var) - len(row_values))
 
             for i in range(int(self.game_size_var)):
@@ -257,26 +268,31 @@ class Game2048:
     def move_right(self, player_num):
         for row in range(int(self.game_size_var)):
             row_values = [number for number in self.board[player_num][row][::-1] if number != 0]
-            row_values = self.combine_numbers(row_values)
+            row_values = self.combine_numbers(row_values,player_num)
             row_values = [0] * (int(self.game_size_var) - len(row_values)) + row_values[::-1]
 
             for i in range(int(self.game_size_var)):
                 self.board[player_num][row][i] = row_values[i]
 
-    def combine_numbers(self, list_to_combine):
+    def combine_numbers(self, list_to_combine,player_num):
         for i in range(len(list_to_combine) - 1):
             if list_to_combine[i] == list_to_combine[i + 1]:
                 list_to_combine[i] *= 2
                 self.score += list_to_combine[i]
+                self.scores[player_num] += list_to_combine[i]
+                print(self.score)
                 list_to_combine[i + 1] = 0
         list_to_combine = [number for number in list_to_combine if number != 0]
         list_to_combine += [0] * (int(self.game_size_var) - len(list_to_combine))
-        self.update_scores(self.player_name, self.score)
+        self.update_scores(self.player_name, self.score,player_num)
         return list_to_combine
 
     def update_interface(self):
-
+        
         for player_num in range(self.num_players):
+            score_label = tk.Label(self.root, text="Score {}: {}".format(player_num + 1, self.scores[player_num]))
+            score_label.grid(row=1, column=player_num * (int(self.game_size_var) + 2), columnspan=2, padx=5, pady=5)
+        
             for i in range(int(self.game_size_var)):
                 for j in range(int(self.game_size_var)):
                     cell_value = self.board[player_num][i][j]
@@ -344,8 +360,18 @@ class Game2048:
             self.move_right(player_num)
 
         self.add_number(self.board[player_num])
+        
+        # Check for game over
+        if self.check_game_over(player_num) and self.opponent_type != "human":
+            # In case of multiplayer, display game over for the current player, let the other player continue
+            self.display_game_over(player_num)
+            return
 
-    def update_scores(self, player_name, new_score):
+        
+        self.update_interface()
+
+
+    def update_scores(self, player_name, new_score,player_num):
         index_joc = int(self.game_size_var)
         game_info = self.scoruri_json["scoruri"].get(f"{index_joc}x{index_joc}")
 
@@ -353,17 +379,17 @@ class Game2048:
             scores = game_info.get("scores", {})
             best_score_info = game_info.get("best_score", {})
 
-            player_info = scores.get(player_name, {})
+            player_info = scores.get(player_name[player_num], {})
 
             
             if player_info.get("score_player", 0) < new_score:
-                player_info["player_name"] = player_name
+                player_info["player_name"] = player_name[0]
                 player_info["score_player"] = new_score
-                scores[player_name] = player_info
+                scores[player_name[player_num]] = player_info
 
                 
                 if new_score > best_score_info.get("scor", 0):
-                    best_score_info["jucator"] = player_name
+                    best_score_info["jucator"] = player_name[player_num]
                     best_score_info["scor"] = new_score
                     game_info["best_score"] = best_score_info
 
@@ -410,7 +436,34 @@ class Game2048:
                 
                 player_label = tk.Label(scores_frame, text=f"{i}. {player}: {score_info['score_player']}")
                 player_label.grid(row=i, column=0, columnspan=3, padx=5, pady=2)  
+    
+    def check_game_over(self, player_num):
+        
+        empty_positions = self.find_empty_positions(self.board[player_num])
+        
+        if not empty_positions:
+            # Check if there are any adjacent matching numbers horizontally or vertically
+            for i in range(int(self.game_size_var)):
+                for j in range(int(self.game_size_var) - 1):
+                    if self.board[player_num][i][j] == self.board[player_num][i][j + 1] or self.board[player_num][j][i] == self.board[player_num][j + 1][i]:
+                        return False  
 
+            for i in range(int(self.game_size_var) - 1):
+                if self.board[player_num][i][int(self.game_size_var) - 1] == self.board[player_num][i + 1][int(self.game_size_var) - 1]:
+                    return False  
+
+            for j in range(int(self.game_size_var) - 1):
+                if self.board[player_num][int(self.game_size_var) - 1][j] == self.board[player_num][int(self.game_size_var) - 1][j + 1]:
+                    return False  
+
+            
+            self.display_game_over(player_num)
+            return True
+        return False
+
+    def display_game_over(self, player_num):
+        game_over_label = tk.Label(self.root, text=f"Game Over!")
+        game_over_label.grid(row=8, column=0, columnspan=4, padx=5, pady=5)
 
 
                 
