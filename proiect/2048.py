@@ -6,13 +6,18 @@ import json
 class Game2048:
     def __init__(self):
         self.root = tk.Tk()
+        self.root.configure(bg="darkgrey")
+
         self.root.title("2048 Game By Gelu Galan")
-        self.player_name = ""
+        self.player_name = []
+        
         self.opponent_type = ""
         self.game_size_var = ""
         self.opponent_options = ["solo", "computer", "human"]
         self.game_size_options = ["2", "3", "4", "5", "6", "7", "8", "9"]
         self.score = 0
+        self.current_page = 0
+        self.buttons_created = False
         self.num_players = 1
         with open("scores.json", "r") as json_file:
             self.scoruri_json = json.load(json_file)
@@ -25,9 +30,14 @@ class Game2048:
         else:
             
             self.board_labels[player_num] = [[None] * int(self.game_size_var) for _ in range(int(self.game_size_var))]
+        if player_num==0:
+            player_name_label = tk.Label(self.root, text="Name: {}".format(self.player_name[0]))
+            player_name_label.grid(row=0, column=player_num * (int(self.game_size_var) + 2), columnspan=2, padx=5, pady=5)
+        else:
+            player_name_label = tk.Label(self.root, text="Name: {}".format(self.player_name[1]))
+            player_name_label.grid(row=0, column=player_num * (int(self.game_size_var) + 2), columnspan=2, padx=5, pady=5)
 
-        player_name_label = tk.Label(self.root, text="Name: {}".format(self.player_name))
-        player_name_label.grid(row=0, column=player_num * (int(self.game_size_var) + 2), columnspan=2, padx=5, pady=5)
+        
 
         opponent_type_label = tk.Label(self.root, text="Opponent: {}".format(self.opponent_type))
         opponent_type_label.grid(row=0, column=player_num * (int(self.game_size_var) + 2) + 2, columnspan=2, padx=5, pady=5)
@@ -40,12 +50,25 @@ class Game2048:
         best_score_label.grid(row=1, column=player_num * (int(self.game_size_var) + 2) + 2, columnspan=2, padx=5, pady=5)
 
         
+        
 
         for i in range(int(self.game_size_var)):
             for j in range(int(self.game_size_var)):
                 cell_label = tk.Label(self.root, text="", width=5, height=2)
                 cell_label.grid(row=i + 3, column=player_num * (int(self.game_size_var) + 2) + j, padx=5, pady=5)
                 self.board_labels[player_num][i][j] = cell_label
+        
+
+        if not self.buttons_created and self.opponent_type == "human":
+            self.buttons_created = True  # Set the flag to True to avoid creating buttons again
+
+            new_game_button = tk.Button(self.root, text="New", command=self.restart_game)
+            new_game_button.grid(row=int(self.game_size_var) + 3, column=player_num * (int(self.game_size_var) + 2), columnspan=1, padx=5, pady=5)
+
+            # Add Quit button
+            quit_button = tk.Button(self.root, text="Quit", command=self.root.destroy)
+            quit_button.grid(row=int(self.game_size_var) + 3, column=player_num * (int(self.game_size_var) + 2) + 1, columnspan=1, padx=5, pady=5)
+
 
 
         
@@ -53,43 +76,101 @@ class Game2048:
     
 
     def create_start_screen(self):
-        start_label = tk.Label(self.root, text=" Name:")
-        start_label.grid(row=5, column=0, columnspan=4)
+        self.start_frame = tk.Frame(self.root)
+        self.start_frame.grid(row=0, column=0)
 
-        self.name_entry = tk.Entry(self.root)
-        self.name_entry.grid(row=6, column=0, columnspan=4, padx=5, pady=5)
+        self.opponent_label = tk.Label(self.start_frame, text="Select opponent:")
+        self.opponent_label.grid(row=0, column=0, columnspan=2)
 
-        opponent_label = tk.Label(self.root, text="Select opponent:")
-        opponent_label.grid(row=7, column=0, columnspan=4)
-
-        self.opponent_var = tk.StringVar(self.root)
+        self.opponent_var = tk.StringVar(self.start_frame)
         self.opponent_var.set(self.opponent_options[0])
 
+        solo_radio = tk.Radiobutton(self.start_frame, text="Solo", variable=self.opponent_var, value="solo")
+        solo_radio.grid(row=1, column=0, padx=5, pady=5)
 
-        opponent_menu = tk.OptionMenu(self.root, self.opponent_var, *self.opponent_options)
-        opponent_menu.grid(row=8, column=0, columnspan=4, padx=5, pady=5)
+        multiplayer_radio = tk.Radiobutton(self.start_frame, text="Multiplayer", variable=self.opponent_var, value="human")
+        multiplayer_radio.grid(row=1, column=1, padx=5, pady=5)
 
+        next_button = tk.Button(self.start_frame, text="Next", command=self.create_selected_fields)
+        next_button.grid(row=2, column=2, padx=5, pady=5)
+
+    def create_selected_fields(self):
+        # Destroy the current start frame
+        self.start_frame.destroy()
+
+        # Check the selected opponent and call the corresponding function
+        selected_opponent = self.opponent_var.get()
+        if selected_opponent == "solo":
+            self.create_solo_fields()
+        elif selected_opponent == "human":
+            self.create_multiplayer_fields()
+
+        
+
+    
+
+
+    def create_solo_fields(self):
+        name_label = tk.Label(self.root, text="Name:")
+        name_label.grid(row=2, column=0, columnspan=4)
+
+        self.name_entry = tk.Entry(self.root)
+        self.name_entry.grid(row=3, column=0, columnspan=4, padx=5, pady=5)
 
         game_size_label = tk.Label(self.root, text="Select game size:")
-        game_size_label.grid(row=9, column=0, columnspan=4)
-        
+        game_size_label.grid(row=4, column=0, columnspan=4)
 
         self.game_size_var = tk.StringVar(self.root)
         self.game_size_var.set(self.game_size_options[2])
 
         top_scores_button = tk.Button(self.root, text="Top Scores", command=self.show_top_scores)
-        top_scores_button.grid(row=11, column=0, columnspan=4, padx=5, pady=5)
+        top_scores_button.grid(row=6, column=0, columnspan=4, padx=5, pady=5)
 
         game_size_menu = tk.OptionMenu(self.root, self.game_size_var, *self.game_size_options)
-        game_size_menu.grid(row=10, column=0, columnspan=4, padx=5, pady=5)
-
-        
+        game_size_menu.grid(row=5, column=0, columnspan=4, padx=5, pady=5)
 
         next_button = tk.Button(self.root, text="Next", command=self.start_game)
-        next_button.grid(row=12, column=0, columnspan=4, padx=5, pady=5)
+        next_button.grid(row=7, column=0, columnspan=4, padx=5, pady=5)
+
+    def create_multiplayer_fields(self):
+        name_label_p1 = tk.Label(self.root, text="Player 1 Name:")
+        name_label_p1.grid(row=2, column=0, columnspan=4)
+
+        self.name_entry = tk.Entry(self.root)
+        self.name_entry.grid(row=3, column=0, columnspan=4, padx=5, pady=5)
+
+        name_entry2 = tk.Label(self.root, text="Player 2 Name:")
+        name_entry2.grid(row=4, column=0, columnspan=4)
+
+        self.player2_name_entry = tk.Entry(self.root)
+        self.player2_name_entry.grid(row=5, column=0, columnspan=4, padx=5, pady=5)
+
+        game_size_label = tk.Label(self.root, text="Select game size:")
+        game_size_label.grid(row=6, column=0, columnspan=4)
+
+        self.game_size_var = tk.StringVar(self.root)
+        self.game_size_var.set(self.game_size_options[2])
+
+        top_scores_button = tk.Button(self.root, text="Top Scores", command=self.show_top_scores)
+        top_scores_button.grid(row=9, column=0, columnspan=4, padx=5, pady=5)
+
+        game_size_menu = tk.OptionMenu(self.root, self.game_size_var, *self.game_size_options)
+        game_size_menu.grid(row=8, column=0, columnspan=4, padx=5, pady=5)
+
+        next_button = tk.Button(self.root, text="Next", command=self.start_game)
+        next_button.grid(row=10, column=0, columnspan=4, padx=5, pady=5)
+
+
+    def restart_game(self):
+        self.root.destroy()
+        game = Game2048()
+
+
 
     def start_game(self):
-        self.player_name = self.name_entry.get()
+        self.player_name.append(self.name_entry.get())
+        self.player_name.append(self.player2_name_entry.get())
+
         self.opponent_type = self.opponent_var.get()
         self.game_size_var = self.game_size_var.get()
         index_joc = int(self.game_size_var)
