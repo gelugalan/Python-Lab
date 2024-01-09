@@ -76,6 +76,14 @@
                 "": {
                     "player_name": "",
                     "score_player": 2052
+                },
+                "gg": {
+                    "player_name": "gg",
+                    "score_player": 608
+                },
+                "aaa": {
+                    "player_name": "aaa",
+                    "score_player": 64
                 }
             }
         },
@@ -101,6 +109,10 @@
                 "": {
                     "player_name": "",
                     "score_player": 648
+                },
+                "Gelu": {
+                    "player_name": "Gelu",
+                    "score_player": 864
                 }
             }
         },
